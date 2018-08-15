@@ -1,20 +1,20 @@
 package server_start
 
 import (
-	"github.com/mitchellh/cli"
 	"flag"
-	"github.com/hashicorp/consul/command/flags"
 	"fmt"
 	"github.com/bestreyer/carfinder/server"
+	"github.com/hashicorp/consul/command/flags"
+	"github.com/mitchellh/cli"
 	"log"
 	"os"
 )
 
 const (
-	synopsis  = "Start server_start"
+	synopsis  = "Start server"
 	addrUsage = "The address to listen to (can be address:port, address, or port, default: %s)"
-	help      = `Usage: server_start start [options]
-Start http server_start: By default, the server_start listens on %s address
+	help      = `Usage: server start start [options]
+Start http server start: By default, the server start listens on %s address
 `
 )
 
@@ -49,17 +49,17 @@ func (c *cmd) Run(args []string) int {
 	}
 
 	if nil == c.server {
-		log.Fatal("c.server_start should not be nil.")
+		log.Fatal("c.server should not be nil.")
 		return 2
 	}
 
-	c.UI.Output(fmt.Sprintf("Start server_start on %s", c.addr))
+	c.UI.Output(fmt.Sprintf("Start server on %s", c.addr))
 	if err := c.server.Start(c.addr); nil != err {
 		log.Fatal(err)
 		return 3
 	}
 
-	return 0;
+	return 0
 }
 
 func (c *cmd) Synopsis() string {

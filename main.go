@@ -1,12 +1,16 @@
 package main
 
 import (
-	"github.com/mitchellh/cli"
 	"github.com/bestreyer/carfinder/cmd"
-	"os"
-	"github.com/bestreyer/carfinder/server"
-	"log"
+	"github.com/bestreyer/carfinder/context"
 	"github.com/bestreyer/carfinder/env"
+	"github.com/bestreyer/carfinder/server"
+	"github.com/go-playground/locales/en"
+	"github.com/go-playground/universal-translator"
+	"github.com/mitchellh/cli"
+	"gopkg.in/go-playground/validator.v9"
+	"log"
+	"os"
 )
 
 func main() {
@@ -18,9 +22,18 @@ func main() {
 
 	ui := &cli.BasicUi{Writer: os.Stdout, ErrorWriter: os.Stderr}
 
-	hsf:= &server.HTTPServerFactory{}
-	rf := cmd.RegisterFactory{ServerFactory: hsf}
+	en := en.New()
+	uni := ut.New(en, en)
+	trans, _ := uni.GetTranslator("en")
 
+	rf := cmd.RegisterFactory{
+		ServerFactory: &server.HTTPServerFactory{
+			&context.ContextFactory{
+				validator.New(),
+				trans,
+			},
+		},
+	}
 
 	r, err := rf.Create()
 	if err != nil {
@@ -36,4 +49,3 @@ func main() {
 
 	cli.Run()
 }
-

@@ -1,10 +1,10 @@
 package env
 
 import (
-	"os"
+	"errors"
 	"fmt"
 	"github.com/joho/godotenv"
-	"errors"
+	"os"
 	"strings"
 )
 

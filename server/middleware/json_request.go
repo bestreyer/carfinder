@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"net/http"
 	"encoding/json"
 	"log"
+	"net/http"
 )
 
 func JsonRequestMiddleware(next http.Handler) http.Handler {
@@ -12,7 +12,7 @@ func JsonRequestMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		var m map[string]string;
+		var m map[string]string
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&m)
 

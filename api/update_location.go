@@ -1,20 +1,19 @@
 package api
 
 import (
-	"net/http"
-	"github.com/julienschmidt/httprouter"
-	"encoding/json"
-	"log"
+	"github.com/bestreyer/carfinder/context"
 	"github.com/bestreyer/carfinder/model"
+	"github.com/julienschmidt/httprouter"
+	"net/http"
 )
 
 func UpdateLocation(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	r.Context()
 	var location model.Location
-	if err := json.NewDecoder(r.Body).Decode(&location); err != nil {
-		w.WriteHeader(400)
-		w.Write([]byte(err.Error()))
+
+	if err := r.Context().(context.ContextInterface).ShouldBindJSON(r.Body, &location); err != nil {
+		r.Context().(context.ContextInterface).BadJSONResponse(w, err)
+		return
 	}
 
-	log.Println(location);
+	r.Context().(context.ContextInterface).JSONResponse(w, nil, 204)
 }

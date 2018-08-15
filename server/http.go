@@ -1,11 +1,12 @@
 package server
 
 import (
-	"net/http"
-	"github.com/julienschmidt/httprouter"
 	"fmt"
 	"github.com/bestreyer/carfinder/api"
+	"github.com/bestreyer/carfinder/context"
+	"github.com/julienschmidt/httprouter"
 	"log"
+	"net/http"
 )
 
 type HTTPServerInterface interface {
@@ -27,7 +28,7 @@ func (h HTTPServer) Start(addr string) error {
 }
 
 type HTTPServerFactory struct {
-	ctxf ContextFactoryInterface
+	ContextFactory context.ContextFactoryInterface
 }
 
 func (hf *HTTPServerFactory) CreateHTTPServer() (HTTPServerInterface, error) {
@@ -54,7 +55,7 @@ func (hf *HTTPServerFactory) CreateHTTPServer() (HTTPServerInterface, error) {
 
 func (hf *HTTPServerFactory) replaceContextMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx, err := hf.ctxf.CreateContext(r.Context())
+		ctx, err := hf.ContextFactory.CreateContext(r.Context())
 		if nil != err {
 			log.Fatal(err)
 		}
