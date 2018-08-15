@@ -15,7 +15,6 @@ type HTTPServerInterface interface {
 	Start(addr string) error
 }
 
-
 type HTTPServer struct {
 	http.Server
 }
@@ -26,24 +25,21 @@ func (h HTTPServer) Start(addr string) error {
 	return h.ListenAndServe()
 }
 
-type HTTPServerFactory struct {}
+type HTTPServerFactory struct{}
 
 func (hf HTTPServerFactory) Create() (HTTPServerInterface, error) {
 	r := httprouter.New()
 	r.GET("/drivers", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		request.Context().
-		fmt.Fprint(writer, "/drivers")
+			fmt.Fprint(writer, "/drivers")
 	})
 
 	r.PUT("/drivers/:id/location", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-		fmt.Fprintf(writer,"Update driver location with id = %d", params.ByName("id"))
+		fmt.Fprintf(writer, "Update driver location with id = %d", params.ByName("id"))
 	})
 
-
-	jm := middleware.JsonResponseMiddleware(middleware.JsonRequestMiddleware(r));
-
-
-
+	jm := middleware.JsonRequestMiddleware(r)
+	
 	h := &HTTPServer{
 		Server: http.Server{Handler: jm},
 	}
