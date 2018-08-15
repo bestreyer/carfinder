@@ -13,7 +13,7 @@ type HTTPServerInterface interface {
 }
 
 type HTTPServerFactoryInterface interface {
-	CreateHTTPServer() (*HTTPServerInterface, error)
+	CreateHTTPServer() (HTTPServerInterface, error)
 }
 
 type HTTPServer struct {
@@ -26,9 +26,11 @@ func (h HTTPServer) Start(addr string) error {
 	return h.ListenAndServe()
 }
 
-type HTTPServerFactory struct{}
+type HTTPServerFactory struct {
+	ctxf ContextFactoryInterface
+}
 
-func (hf HTTPServerFactory) CreateHTTPServer() (*HTTPServerInterface, error) {
+func (hf *HTTPServerFactory) CreateHTTPServer() (HTTPServerInterface, error) {
 	r := httprouter.New()
 
 	r.PanicHandler = func(w http.ResponseWriter, r *http.Request, i interface{}) {
@@ -41,13 +43,22 @@ func (hf HTTPServerFactory) CreateHTTPServer() (*HTTPServerInterface, error) {
 
 	r.PUT("/drivers/:id/location", api.UpdateLocation)
 
-	//jm := middleware.JsonRequestMiddleware(r)
-
 	h := &HTTPServer{
 		Server: http.Server{
-			Handler: r,
+			Handler: hf.replaceContextMiddleware(r),
 		},
 	}
 
 	return h, nil
+}
+
+func (hf *HTTPServerFactory) replaceContextMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, err := hf.ctxf.CreateContext(r.Context())
+		if nil != err {
+			log.Fatal(err)
+		}
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }

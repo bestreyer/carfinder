@@ -9,7 +9,7 @@ import (
 )
 
 type ContextFactoryInterface interface {
-	CreateContext() (*Context, error)
+	CreateContext(replaceableCtx context.Context) (*Context, error)
 }
 
 type ContextInterface interface {
@@ -28,14 +28,14 @@ type ContextFactory struct {
 	validator *validator.Validate
 }
 
-func (cf *ContextFactory) CreateContext() (*Context, error) {
+func (cf *ContextFactory) CreateContext(replaceableCtx context.Context) (*Context, error) {
 	return &Context{
-		context.Background(),
+		replaceableCtx,
 		validator.New(),
 	}, nil
 }
 
-func (c *Context) ShouldBindJSON(r * io.Reader, i interface{}) error {
+func (c *Context) ShouldBindJSON(r io.Reader, i interface{}) error {
 	decoder := json.NewDecoder(r)
 
 	if err := decoder.Decode(i); nil != err {

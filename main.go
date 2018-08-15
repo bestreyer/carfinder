@@ -21,6 +21,7 @@ func main() {
 	hsf:= &server.HTTPServerFactory{}
 	rf := cmd.RegisterFactory{ServerFactory: hsf}
 
+
 	r, err := rf.Create()
 	if err != nil {
 		log.Fatal(err.Error())
