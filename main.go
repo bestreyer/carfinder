@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/mitchellh/cli"
-	"github.com/bestreyer/carfinder/command"
+	"github.com/bestreyer/carfinder/cmd"
 	"os"
 	"github.com/bestreyer/carfinder/server"
 	"log"
@@ -19,7 +19,7 @@ func main() {
 	ui := &cli.BasicUi{Writer: os.Stdout, ErrorWriter: os.Stderr}
 
 	hsf:= &server.HTTPServerFactory{}
-	rf := command.RegisterFactory{ServerFactory: hsf}
+	rf := cmd.RegisterFactory{ServerFactory: hsf}
 
 	r, err := rf.Create()
 	if err != nil {

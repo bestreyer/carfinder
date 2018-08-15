@@ -4,15 +4,16 @@ import (
 	"net/http"
 	"github.com/julienschmidt/httprouter"
 	"fmt"
-	"github.com/bestreyer/carfinder/server/middleware"
+	"github.com/bestreyer/carfinder/api"
+	"log"
 )
-
-type HTTPServerFactoryInterface interface {
-	Create() (HTTPServerInterface, error)
-}
 
 type HTTPServerInterface interface {
 	Start(addr string) error
+}
+
+type HTTPServerFactoryInterface interface {
+	CreateHTTPServer() (*HTTPServerInterface, error)
 }
 
 type HTTPServer struct {
@@ -27,21 +28,25 @@ func (h HTTPServer) Start(addr string) error {
 
 type HTTPServerFactory struct{}
 
-func (hf HTTPServerFactory) Create() (HTTPServerInterface, error) {
+func (hf HTTPServerFactory) CreateHTTPServer() (*HTTPServerInterface, error) {
 	r := httprouter.New()
+
+	r.PanicHandler = func(w http.ResponseWriter, r *http.Request, i interface{}) {
+		log.Println(i)
+	}
+
 	r.GET("/drivers", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-		request.Context().
-			fmt.Fprint(writer, "/drivers")
+		fmt.Fprint(writer, "/drivers")
 	})
 
-	r.PUT("/drivers/:id/location", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-		fmt.Fprintf(writer, "Update driver location with id = %d", params.ByName("id"))
-	})
+	r.PUT("/drivers/:id/location", api.UpdateLocation)
 
-	jm := middleware.JsonRequestMiddleware(r)
-	
+	//jm := middleware.JsonRequestMiddleware(r)
+
 	h := &HTTPServer{
-		Server: http.Server{Handler: jm},
+		Server: http.Server{
+			Handler: r,
+		},
 	}
 
 	return h, nil
