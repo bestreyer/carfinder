@@ -2,7 +2,7 @@ package http
 
 import (
 	"fmt"
-	"github.com/bestreyer/carfinder/api"
+	"github.com/bestreyer/carfinder/pkg/api"
 	"github.com/bestreyer/carfinder/pkg/context"
 	"github.com/julienschmidt/httprouter"
 	"log"

@@ -1,8 +1,8 @@
-package cmd
+package command
 
 import (
 	"errors"
-	"github.com/bestreyer/carfinder/cmd/server_start"
+	"github.com/bestreyer/carfinder/pkg/command/server_start"
 	httpserver "github.com/bestreyer/carfinder/pkg/http"
 	"github.com/mitchellh/cli"
 )
@@ -48,7 +48,7 @@ func (rf RegisterFactory) Create() (RegisterInterface, error) {
 	}
 
 	r := &Register{registry: make(map[string]Factory)}
-	r.Register("http start", func(ui cli.Ui) (cli.Command, error) {
+	r.Register("server start", func(ui cli.Ui) (cli.Command, error) {
 		hs, err := rf.ServerFactory.CreateHTTPServer()
 		if nil != err {
 			return nil, err
