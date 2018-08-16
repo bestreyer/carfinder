@@ -6,3 +6,20 @@ services:
     restart: always
     volumes:
       - ./:/go/src/github.com/bestreyer/carfinder
+    ports:
+      - 8888:8888
+
+  postgre:
+    image: kartoza/postgis:9.6-2.4
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - ALLOW_IP_RANGE=0.0.0.0/0
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql
+
+volumes:
+  db-data:
