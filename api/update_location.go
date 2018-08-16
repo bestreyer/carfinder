@@ -15,5 +15,6 @@ func UpdateLocation(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 		return
 	}
 
+
 	r.Context().(context.ContextInterface).JSONResponse(w, nil, 204)
 }

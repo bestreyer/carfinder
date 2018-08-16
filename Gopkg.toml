@@ -25,10 +25,34 @@
 #   unused-packages = true
 
 
-[prune]
-  go-tests = true
-  unused-packages = true
+[[constraint]]
+  name = "github.com/go-playground/locales"
+  version = "0.12.1"
+
+[[constraint]]
+  name = "github.com/go-playground/universal-translator"
+  version = "0.16.0"
+
+[[constraint]]
+  name = "github.com/hashicorp/consul"
+  version = "1.2.2"
+
+[[constraint]]
+  name = "github.com/joho/godotenv"
+  version = "1.2.0"
+
+[[constraint]]
+  name = "github.com/julienschmidt/httprouter"
+  version = "1.1.0"
 
 [[constraint]]
   branch = "master"
   name = "github.com/mitchellh/cli"
+
+[[constraint]]
+  name = "gopkg.in/go-playground/validator.v9"
+  version = "9.21.0"
+
+[prune]
+  go-tests = true
+  unused-packages = true

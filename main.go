@@ -23,6 +23,7 @@ func main() {
 	ui := &cli.BasicUi{Writer: os.Stdout, ErrorWriter: os.Stderr}
 
 	en := en.New()
+
 	uni := ut.New(en, en)
 	trans, _ := uni.GetTranslator("en")
 

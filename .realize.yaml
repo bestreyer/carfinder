@@ -1,0 +1,25 @@
+settings:
+  legacy:
+    force: true
+    interval: 100ms
+schema:
+- name: carfinder
+  path: .
+  commands:
+    install:
+      status: true
+    run:
+      status: true
+  args:
+    - server
+    - start
+    - -addr=0.0.0.0:8888
+  watcher:
+    extensions:
+    - go
+    paths:
+    - /
+    ignored_paths:
+    - .git
+    - .realize
+    - vendor

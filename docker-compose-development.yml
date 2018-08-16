@@ -1,0 +1,8 @@
+version: "3"
+services:
+  application:
+    build:
+      context: docker/development/
+    restart: always
+    volumes:
+      - ./:/go/src/github.com/bestreyer/carfinder
