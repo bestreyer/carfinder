@@ -1,9 +1,9 @@
-package server
+package http
 
 import (
 	"fmt"
 	"github.com/bestreyer/carfinder/api"
-	"github.com/bestreyer/carfinder/context"
+	"github.com/bestreyer/carfinder/pkg/context"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"

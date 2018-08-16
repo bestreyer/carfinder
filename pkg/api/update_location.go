@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/bestreyer/carfinder/context"
+	"github.com/bestreyer/carfinder/pkg/context"
 	"github.com/bestreyer/carfinder/model"
 	"github.com/julienschmidt/httprouter"
 	"net/http"

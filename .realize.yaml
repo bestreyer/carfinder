@@ -11,7 +11,7 @@ schema:
     run:
       status: true
   args:
-    - server
+    - http
     - start
     - -addr=0.0.0.0:8888
   watcher:

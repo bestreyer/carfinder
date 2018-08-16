@@ -118,6 +118,17 @@
   version = "v1.1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:37ce7d7d80531b227023331002c0d42b4b4b291a96798c82a049d03a54ba79e4"
+  name = "github.com/lib/pq"
+  packages = [
+    ".",
+    "oid",
+  ]
+  pruneopts = "UT"
+  revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
+
+[[projects]]
   digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
   name = "github.com/mattn/go-colorable"
   packages = ["."]
@@ -202,6 +213,7 @@
     "github.com/hashicorp/consul/command/flags",
     "github.com/joho/godotenv",
     "github.com/julienschmidt/httprouter",
+    "github.com/lib/pq",
     "github.com/mitchellh/cli",
     "gopkg.in/go-playground/validator.v9",
   ]

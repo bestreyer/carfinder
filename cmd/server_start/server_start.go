@@ -3,7 +3,7 @@ package server_start
 import (
 	"flag"
 	"fmt"
-	"github.com/bestreyer/carfinder/server"
+	"github.com/bestreyer/carfinder/pkg/http"
 	"github.com/hashicorp/consul/command/flags"
 	"github.com/mitchellh/cli"
 	"log"
@@ -13,20 +13,20 @@ import (
 const (
 	synopsis  = "Start server"
 	addrUsage = "The address to listen to (can be address:port, address, or port, default: %s)"
-	help      = `Usage: server start start [options]
-Start http server start: By default, the server start listens on %s address
+	help      = `Usage: server start [options]
+Start server: By default, the server listens on %s address
 `
 )
 
 type cmd struct {
 	UI     cli.Ui
-	server server.HTTPServerInterface
+	server http.HTTPServerInterface
 	addr   string
 	flags  *flag.FlagSet
 	help   string
 }
 
-func New(ui cli.Ui, hs server.HTTPServerInterface) *cmd {
+func New(ui cli.Ui, hs http.HTTPServerInterface) *cmd {
 	c := &cmd{UI: ui, server: hs}
 	c.init()
 	return c

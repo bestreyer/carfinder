@@ -1,9 +1,10 @@
 ### How to store latitude and longitude
 `driver_location` table has three columns, which to store location: `latitude`, `longitude`, `location`
 
-`location` column is geometry type column. latitude and longitude columns are double precision type column
+`location` column is geometry type column(SRID 4326). `latitude` and `longitude` columns are double precision type column
 
 I use geometry type column, because we can assume that within 50 meters the area is flat. Also geometry types have better perfomance than geography types.
+
 I store both location and pair (latitude, longitude), because ST_AsText function, which converts from geometry to latitude, latitude is slow function
 
 ```

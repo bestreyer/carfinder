@@ -3,7 +3,7 @@ package cmd
 import (
 	"errors"
 	"github.com/bestreyer/carfinder/cmd/server_start"
-	httpserver "github.com/bestreyer/carfinder/server"
+	httpserver "github.com/bestreyer/carfinder/pkg/http"
 	"github.com/mitchellh/cli"
 )
 
@@ -11,11 +11,11 @@ type Factory func(cli.Ui) (cli.Command, error)
 
 type RegisterInterface interface {
 	Register(name string, fn Factory)
-	Map(ui cli.Ui) *cli.CommandFactory
+	Map(ui cli.Ui) map[string]cli.CommandFactory
 }
 
 type RegisterFactoryInterface interface {
-	Create() (*Register, error)
+	Create() (RegisterInterface, error)
 }
 
 type Register struct {
@@ -42,13 +42,13 @@ type RegisterFactory struct {
 	ServerFactory httpserver.HTTPServerFactoryInterface
 }
 
-func (rf RegisterFactory) Create() (*Register, error) {
+func (rf RegisterFactory) Create() (RegisterInterface, error) {
 	if nil == rf.ServerFactory {
 		return nil, errors.New("ServerFactory should not be nil.")
 	}
 
 	r := &Register{registry: make(map[string]Factory)}
-	r.Register("server start", func(ui cli.Ui) (cli.Command, error) {
+	r.Register("http start", func(ui cli.Ui) (cli.Command, error) {
 		hs, err := rf.ServerFactory.CreateHTTPServer()
 		if nil != err {
 			return nil, err
