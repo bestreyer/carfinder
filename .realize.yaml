@@ -6,12 +6,14 @@ schema:
 - name: carfinder
   path: .
   commands:
-    install:
+    build:
       status: true
+      method: make build
     run:
       status: true
+      method: build/carfinder
   args:
-    - http
+    - server
     - start
     - -addr=0.0.0.0:8888
   watcher:
