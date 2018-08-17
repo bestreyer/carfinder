@@ -9,37 +9,21 @@ import (
 	"net/http"
 )
 
-type ContextFactoryInterface interface {
-	CreateContext(replaceableCtx context.Context) (*Context, error)
-}
 
-type ContextInterface interface {
+type Context interface {
 	context.Context
 	ShouldBindJSON(r io.Reader, i interface{}) error
 	JSONResponse(w http.ResponseWriter, i interface{}, statusCode int)
 	BadJSONResponse(w http.ResponseWriter, err error)
 }
 
-type Context struct {
+type ctx struct {
 	context.Context
 	validator  *validator.Validate
 	translator ut.Translator
 }
 
-type ContextFactory struct {
-	Validator  *validator.Validate
-	Translator ut.Translator
-}
-
-func (cf *ContextFactory) CreateContext(replaceableCtx context.Context) (*Context, error) {
-	return &Context{
-		replaceableCtx,
-		cf.Validator,
-		cf.Translator,
-	}, nil
-}
-
-func (c *Context) ShouldBindJSON(r io.Reader, i interface{}) error {
+func (c *ctx) ShouldBindJSON(r io.Reader, i interface{}) error {
 	decoder := json.NewDecoder(r)
 
 	if err := decoder.Decode(i); nil != err {
@@ -49,7 +33,7 @@ func (c *Context) ShouldBindJSON(r io.Reader, i interface{}) error {
 	return c.validator.Struct(i)
 }
 
-func (c *Context) BadJSONResponse(w http.ResponseWriter, err error) {
+func (c *ctx) BadJSONResponse(w http.ResponseWriter, err error) {
 	errors := make([]string, 0, 3)
 	statusCode := 400
 
@@ -74,7 +58,7 @@ func (c *Context) BadJSONResponse(w http.ResponseWriter, err error) {
 	c.JSONResponse(w, &m, statusCode)
 }
 
-func (c *Context) JSONResponse(w http.ResponseWriter, i interface{}, statusCode int) {
+func (c *ctx) JSONResponse(w http.ResponseWriter, i interface{}, statusCode int) {
 	w.WriteHeader(statusCode)
 
 	if nil == i {

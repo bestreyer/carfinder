@@ -3,11 +3,11 @@ package server_start
 import (
 	"flag"
 	"fmt"
-	"github.com/bestreyer/carfinder/pkg/http"
 	"github.com/hashicorp/consul/command/flags"
 	"github.com/mitchellh/cli"
 	"log"
 	"github.com/bestreyer/carfinder/pkg/env"
+	"github.com/bestreyer/carfinder/pkg/server"
 )
 
 const (
@@ -20,13 +20,13 @@ Start server: By default, the server listens on %s address
 
 type cmd struct {
 	UI     cli.Ui
-	server http.HTTPServerInterface
+	server server.Server
 	addr   string
 	flags  *flag.FlagSet
 	help   string
 }
 
-func New(ui cli.Ui, hs http.HTTPServerInterface) *cmd {
+func New(ui cli.Ui, hs server.Server) *cmd {
 	c := &cmd{UI: ui, server: hs}
 	c.init()
 	return c

@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/bestreyer/carfinder/pkg/command"
 	"github.com/bestreyer/carfinder/pkg/context"
-	"github.com/bestreyer/carfinder/pkg/http"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/universal-translator"
 	"github.com/mitchellh/cli"
@@ -13,10 +12,11 @@ import (
 	"fmt"
 	"database/sql"
 	"github.com/bestreyer/carfinder/pkg/env"
+	"github.com/bestreyer/carfinder/pkg/server"
 )
 
 func main() {
-	r := createRegister()
+	r := createCommandRegister()
 	//dbConn := createDbConnFromEnv()
 	ui := &cli.BasicUi{Writer: os.Stdout, ErrorWriter: os.Stderr}
 	cli := &cli.CLI{
@@ -41,17 +41,10 @@ func createTranslator() (ut.Translator) {
 	return trans
 }
 
-func createRegister() (command.RegisterInterface) {
-	rf := command.RegisterFactory{
-		ServerFactory: &http.HTTPServerFactory{
-			&context.ContextFactory{
-				validator.New(),
-				createTranslator(),
-			},
-		},
-	}
-
-	r, err := rf.Create()
+func createCommandRegister() (command.Register) {
+	cf := context.NewFactory(validator.New(), createTranslator())
+	sf := server.NewFactory(cf)
+	r, err := command.NewRegister(sf)
 
 	if err != nil {
 		log.Fatal(err.Error())
