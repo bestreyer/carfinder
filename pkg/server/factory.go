@@ -24,11 +24,11 @@ func (f *factory) Create() (Server, error) {
 		log.Println(i)
 	}
 
-	r.GET("/drivers", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	r.GET("/api/v1/drivers", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		fmt.Fprint(writer, "/drivers")
 	})
 
-	r.PUT("/drivers/:id/location", api.UpdateLocation)
+	r.PUT("/api/v1/drivers/:id/location", api.UpdateLocation)
 
 	s := &server{
 		Server: http.Server{

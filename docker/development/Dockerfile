@@ -1,6 +1,6 @@
 FROM golang:alpine
 
-RUN apk --no-cache add git && \
+RUN apk --no-cache add git make && \
     go get github.com/golang/dep/cmd/dep && \
     go get github.com/oxequa/realize
 
