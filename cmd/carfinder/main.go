@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/bestreyer/carfinder/pkg/command"
 	"github.com/bestreyer/carfinder/pkg/context"
-	"github.com/bestreyer/carfinder/pkg/env"
 	"github.com/bestreyer/carfinder/pkg/http"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/universal-translator"
@@ -13,10 +12,10 @@ import (
 	"os"
 	"fmt"
 	"database/sql"
+	"github.com/bestreyer/carfinder/pkg/env"
 )
 
 func main() {
-	loadEnvVariables()
 	r := createRegister()
 	//dbConn := createDbConnFromEnv()
 	ui := &cli.BasicUi{Writer: os.Stdout, ErrorWriter: os.Stderr}
@@ -28,14 +27,6 @@ func main() {
 	}
 
 	cli.Run()
-}
-
-func loadEnvVariables() {
-	err := env.LoadEnvVariables()
-
-	if nil != err {
-		log.Fatal(err)
-	}
 }
 
 func createTranslator() (ut.Translator) {
@@ -72,10 +63,10 @@ func createRegister() (command.RegisterInterface) {
 func createDbConnFromEnv() (*sql.DB) {
 	connStr := fmt.Sprintf(
 		"postgres://%s:%s@%s/%s?sslmode=verify-full",
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASS"),
-		os.Getenv("POSTGRES_HOST"),
-		os.Getenv("POSTGRES_DBNAME"),
+		env.GetEnv("POSTGRES_USER", "root"),
+		env.GetEnv("POSTGRES_PASS", "root"),
+		env.GetEnv("POSTGRES_HOST", "127.0.0.1"),
+		env.GetEnv("POSTGRES_DBNAME", "carfinder"),
 	)
 
 	db, err := sql.Open("postgres", connStr)

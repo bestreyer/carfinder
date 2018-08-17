@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/consul/command/flags"
 	"github.com/mitchellh/cli"
 	"log"
-	"os"
+	"github.com/bestreyer/carfinder/pkg/env"
 )
 
 const (
@@ -33,10 +33,7 @@ func New(ui cli.Ui, hs http.HTTPServerInterface) *cmd {
 }
 
 func (c *cmd) init() {
-	defaultAddr := os.Getenv("CARFINDER_ADDR")
-	if defaultAddr == "" {
-		defaultAddr = "127.0.0.1"
-	}
+	defaultAddr := env.GetEnv("CARFINDER_ADDR", "127.0.0.1:8888")
 
 	c.flags = flag.NewFlagSet("", flag.ContinueOnError)
 	c.flags.StringVar(&c.addr, "addr", defaultAddr, fmt.Sprintf(addrUsage, defaultAddr))

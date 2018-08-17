@@ -1,7 +1,7 @@
 settings:
   legacy:
-    force: true
-    interval: 100ms
+    force: false
+    interval: 0ms
 schema:
 - name: carfinder
   path: .
