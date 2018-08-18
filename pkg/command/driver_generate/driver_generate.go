@@ -1,4 +1,4 @@
-package generate_drivers
+package driver_generate
 
 import (
 	"github.com/mitchellh/cli"
@@ -6,17 +6,22 @@ import (
 	"github.com/hashicorp/consul/command/flags"
 	"github.com/bestreyer/carfinder/pkg/location"
 	"github.com/labstack/gommon/log"
+	"context"
+	"time"
+	"fmt"
+	"math/rand"
 )
 
 const (
 	synopsis = "Database initialization"
-	help     = `Usage: driver generate`
+	help     = `Usage: driver generate [option]`
 )
 
 type cmd struct {
 	UI     cli.Ui
 	lr     location.Repository
 	amount int
+	random bool
 	flags  *flag.FlagSet
 	help   string
 }
@@ -29,7 +34,8 @@ func New(ui cli.Ui, lr location.Repository) *cmd {
 
 func (c *cmd) init() {
 	c.flags = flag.NewFlagSet("", flag.ContinueOnError)
-	c.flags.IntVar(&c.amount, "amount", 0, "Amount of drivers, which will be generated")
+	c.flags.IntVar(&c.amount, "amount", 0, "Amount of drivers locations, which will be generated")
+	c.flags.BoolVar(&c.random, "random", false, "Are generated drivers locations randomly or (0,0) ?")
 	c.help = flags.Usage(help, c.flags)
 }
 
@@ -38,10 +44,32 @@ func (c *cmd) Run(args []string) int {
 		return 1
 	}
 
-	c.UI.Output("Start generating drivers....")
+	results := make(chan error, c.amount)
+	jobs := make(chan *location.Location, c.amount)
+
+	c.UI.Output(fmt.Sprintf("Start generating %d drivers....", c.amount))
+	for i := 0; i < 10; i++ {
+		go c.createDriversLocationsWorker(jobs, results)
+	}
+
+	var generateLocation func() (*location.Location)
+
+	if true == c.random {
+		generateLocation = generateRandomLocation
+	} else {
+		generateLocation = generateInitLocation
+	}
 
 	for i := 0; i < c.amount; i++ {
-		go c.generateDriver()
+		jobs <- generateLocation()
+	}
+	close(jobs)
+
+	for i := 0; i < c.amount; i++ {
+		err := <-results
+		if nil != err {
+			log.Fatal(err)
+		}
 	}
 
 	c.UI.Output("Completed")
@@ -49,11 +77,39 @@ func (c *cmd) Run(args []string) int {
 	return 0
 }
 
-func (c *cmd) generateDriver() {
-	l := location.Location{}
-	err := c.lr.Create(&l)
-	if nil != err {
-		log.Fatal(err)
+func (c *cmd) createDriversLocationsWorker(jobs <-chan *location.Location, results chan<- error) {
+	for job := range jobs {
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+
+		err := c.lr.Create(ctx, job)
+		results <- err
+	}
+}
+
+// Random Republic of Singapore latitude
+func randLatitude() float64 {
+	return 1.478400 + rand.Float64()*(1.149600-1.478400)
+}
+
+// Random Republic of Singapore longitude
+func randLongitude() float64 {
+	return 104.094500 + rand.Float64()*(104.094500-103.594000)
+}
+
+func generateRandomLocation() (*location.Location) {
+	return &location.Location{
+		Longitude: randLongitude(),
+		Latitude:  randLatitude(),
+		UpdatedAt: time.Now(),
+	}
+}
+
+func generateInitLocation() (*location.Location) {
+	return &location.Location{
+		Longitude: randLongitude(),
+		Latitude:  randLatitude(),
+		UpdatedAt: time.Unix(0, 0),
 	}
 }
 
@@ -62,5 +118,5 @@ func (c *cmd) Synopsis() string {
 }
 
 func (c *cmd) Help() string {
-	return help
+	return c.help
 }

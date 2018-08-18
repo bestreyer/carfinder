@@ -5,8 +5,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"log"
-	"fmt"
-	"github.com/bestreyer/carfinder/pkg/api"
+	"github.com/bestreyer/carfinder/pkg/route"
 )
 
 type Factory interface {
@@ -14,21 +13,22 @@ type Factory interface {
 }
 
 type factory struct {
-	cf context.Factory
+	routeCollection []route.Route
+	cf              context.Factory
 }
 
 func (f *factory) Create() (Server, error) {
 	r := httprouter.New()
 
+	for _, rt := range f.routeCollection {
+		r.Handle(rt.Method(), rt.Path(), func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+			rt.Controller().Handle(w, r, ps)
+		})
+	}
+
 	r.PanicHandler = func(w http.ResponseWriter, r *http.Request, i interface{}) {
 		log.Println(i)
 	}
-
-	r.GET("/api/v1/drivers", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-		fmt.Fprint(writer, "/drivers")
-	})
-
-	r.PUT("/api/v1/drivers/:id/location", api.UpdateLocation)
 
 	s := &server{
 		Server: http.Server{
@@ -50,6 +50,6 @@ func (f *factory) replaceContextMiddleware(next http.Handler, cf context.Factory
 	})
 }
 
-func NewFactory(cf context.Factory) (Factory) {
-	return &factory{cf: cf}
+func NewFactory(cf context.Factory, routeCollection []route.Route) (Factory) {
+	return &factory{cf: cf, routeCollection: routeCollection}
 }

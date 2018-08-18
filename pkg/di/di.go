@@ -3,7 +3,6 @@ package di
 import (
 	"github.com/go-playground/universal-translator"
 	"github.com/go-playground/locales/en"
-	"github.com/bestreyer/carfinder/pkg/command"
 	"github.com/bestreyer/carfinder/pkg/context"
 	"gopkg.in/go-playground/validator.v9"
 	"github.com/bestreyer/carfinder/pkg/server"
@@ -11,20 +10,62 @@ import (
 	"fmt"
 	"github.com/bestreyer/carfinder/pkg/env"
 	"github.com/labstack/gommon/log"
+	_ "github.com/lib/pq"
+	"github.com/bestreyer/carfinder/pkg/location"
+	"github.com/bestreyer/carfinder/pkg/api"
+	"github.com/bestreyer/carfinder/pkg/route"
 )
 
 type DI interface {
 	GetTranslator() (ut.Translator)
-	GetCommandRegister() (command.Register)
 	GetDbConn() (*sql.DB)
 	GetValidator() (*validator.Validate)
+	GetContextFactory() (context.Factory)
+	GetServerFactory() (server.Factory)
+	GetLocationRepository() (location.Repository)
+	GetRouteCollection() ([]route.Route)
 }
 
 type di struct {
-	translator ut.Translator
-	register   command.Register
-	dbConn     *sql.DB
-	validator  *validator.Validate
+	translator         ut.Translator
+	dbConn             *sql.DB
+	validator          *validator.Validate
+	serverFactory      server.Factory
+	contextFactory     context.Factory
+	locationRepository location.Repository
+	routeCollection    []route.Route
+}
+
+func (d *di) GetRouteCollection() ([]route.Route) {
+	if nil != d.routeCollection {
+		return d.routeCollection
+	}
+
+	d.routeCollection = make([]route.Route, 2, 2)
+
+	d.routeCollection[0] = route.New(
+		"PUT",
+		"/api/v1/drivers/:id/location",
+		api.NewUpdateLocationController(d.GetLocationRepository()),
+	)
+
+	d.routeCollection[1] = route.New(
+		"GET",
+		"/api/v1/drivers",
+		api.NewGetDriverController(d.GetLocationRepository()),
+	)
+
+	return d.routeCollection
+}
+
+func (d *di) GetLocationRepository() (location.Repository) {
+	if nil != d.locationRepository {
+		return d.locationRepository
+	}
+
+	d.locationRepository = location.NewPostgreRepository(d.GetDbConn())
+
+	return d.locationRepository
 }
 
 func (d *di) GetValidator() (*validator.Validate) {
@@ -34,6 +75,25 @@ func (d *di) GetValidator() (*validator.Validate) {
 
 	d.validator = validator.New()
 	return d.validator
+}
+
+func (d *di) GetContextFactory() (context.Factory) {
+	if nil != d.contextFactory {
+		return d.contextFactory
+	}
+
+	d.contextFactory = context.NewFactory(d.GetValidator(), d.GetTranslator());
+	return d.contextFactory
+}
+
+func (d *di) GetServerFactory() (server.Factory) {
+	if nil != d.serverFactory {
+		return d.serverFactory
+	}
+
+	d.serverFactory = server.NewFactory(d.GetContextFactory(), d.GetRouteCollection())
+
+	return d.serverFactory
 }
 
 func (d *di) GetTranslator() (ut.Translator) {
@@ -53,31 +113,13 @@ func (d *di) GetTranslator() (ut.Translator) {
 	return d.translator
 }
 
-func (d *di) GetCommandRegister() (command.Register) {
-	if nil != d.register {
-		return d.register
-	}
-
-	cf := context.NewFactory(d.GetValidator(), d.GetTranslator())
-	sf := server.NewFactory(cf)
-	r, err := command.NewRegister(sf)
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	d.register = r
-
-	return d.register
-}
-
 func (d *di) GetDbConn() (*sql.DB) {
 	if nil != d.dbConn {
 		return d.dbConn
 	}
 
 	connStr := fmt.Sprintf(
-		"postgres://%s:%s@%s/%s?sslmode=verify-full",
+		"postgres://%s:%s@%s/%s",
 		env.GetEnv("POSTGRES_USER", "root"),
 		env.GetEnv("POSTGRES_PASS", "root"),
 		env.GetEnv("POSTGRES_HOST", "127.0.0.1"),
@@ -85,6 +127,7 @@ func (d *di) GetDbConn() (*sql.DB) {
 	)
 
 	db, err := sql.Open("postgres", connStr)
+	db.SetMaxOpenConns(20)
 
 	if nil != err {
 		log.Fatal(err)

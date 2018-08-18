@@ -102,20 +102,23 @@
   revision = "4b67f2c2b2bb5b748d934a6d48221062e43d2274"
 
 [[projects]]
-  digest = "1:70e697d67ccaec45e16bac3a32380ebcd9e7e071079c60d0171d42cf1cf9748a"
-  name = "github.com/joho/godotenv"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "a79fa1e548e2c689c241d10173efd51e5d689d5b"
-  version = "v1.2.0"
-
-[[projects]]
   digest = "1:ccfa094742ce1c97fd3f6481e1bf98f3d9862510eee2bc0eb56e2745396bd330"
   name = "github.com/julienschmidt/httprouter"
   packages = ["."]
   pruneopts = "UT"
   revision = "8c199fb6259ffc1af525cc3ad52ee60ba8359669"
   version = "v1.1"
+
+[[projects]]
+  digest = "1:faee5b9f53eb1ae4eb04708c040c8c4dd685ce46509671e57a08520a15c54368"
+  name = "github.com/labstack/gommon"
+  packages = [
+    "color",
+    "log",
+  ]
+  pruneopts = "UT"
+  revision = "d6898124de917583f5ff5592ef931d1dfe0ddc05"
+  version = "0.2.6"
 
 [[projects]]
   branch = "master"
@@ -190,6 +193,22 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:c468422f334a6b46a19448ad59aaffdfc0a36b08fdcc1c749a0b29b6453d7e59"
+  name = "github.com/valyala/bytebufferpool"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
+
+[[projects]]
+  branch = "master"
+  digest = "1:268b8bce0064e8c057d7b913605459f9a26dcab864c0886a56d196540fbf003f"
+  name = "github.com/valyala/fasttemplate"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "dcecefd839c4193db0d35b88ec65b4c12d360ab0"
+
+[[projects]]
+  branch = "master"
   digest = "1:05662433b3a13c921587a6e622b5722072edff83211efd1cd79eeaeedfd83f07"
   name = "golang.org/x/sys"
   packages = ["unix"]
@@ -211,8 +230,8 @@
     "github.com/go-playground/locales/en",
     "github.com/go-playground/universal-translator",
     "github.com/hashicorp/consul/command/flags",
-    "github.com/joho/godotenv",
     "github.com/julienschmidt/httprouter",
+    "github.com/labstack/gommon/log",
     "github.com/lib/pq",
     "github.com/mitchellh/cli",
     "gopkg.in/go-playground/validator.v9",

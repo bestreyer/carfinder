@@ -6,12 +6,16 @@ GOTEST				= $(GOCMD) test
 GOGET				= $(GOCMD) get
 WATCH				= realize start
 GOBIN      			= $(shell go env GOPATH)/bin
+
 CARFINDER_CMD_SRC	= cmd/carfinder/main.go
 CARFINDER_CMD_BIN	= build/carfinder
 
 
 build:
 	$(GOBUILD) -o $(CARFINDER_CMD_BIN) $(CARFINDER_CMD_SRC)
+
+productionbuild:
+	CGO_ENABLED=0 GOOS=linux $(GOBUILD) -a -o $(CARFINDER_CMD_BIN) $(CARFINDER_CMD_SRC)
 
 watch:
 	$(WATCH)

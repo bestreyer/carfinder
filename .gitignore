@@ -3,4 +3,5 @@
 carfinder
 vendor
 vendor.orig
+.vendor-new
 build/

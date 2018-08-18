@@ -38,10 +38,6 @@
   version = "1.2.2"
 
 [[constraint]]
-  name = "github.com/joho/godotenv"
-  version = "1.2.0"
-
-[[constraint]]
   name = "github.com/julienschmidt/httprouter"
   version = "1.1.0"
 
