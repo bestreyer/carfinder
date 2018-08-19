@@ -5,10 +5,10 @@ GOINSTALL					= $(GOCMD) install
 GOTEST						= $(GOCMD) test
 GOGET						= $(GOCMD) get
 WATCH						= realize start
-GOBIN      					= $(shell go env GOPATH)/bin
+GOBIN						= $(shell go env GOPATH)/bin
 DOCKER_COMPOSE				= docker-compose
-DOCKER_COMPOSE_DEVELOPMENT 	= $(DOCKER_COMPOSE) -f build/docker-compose/development/docker-compose.yml
-DOCKER_COMPOSE_PRODUCTION 	= $(DOCKER_COMPOSE) -f build/docker-compose/production/docker-compose.yml
+DOCKER_COMPOSE_DEVELOPMENT	= $(DOCKER_COMPOSE) -f build/docker-compose/development/docker-compose.yml
+DOCKER_COMPOSE_PRODUCTION	= $(DOCKER_COMPOSE) -f build/docker-compose/production/docker-compose.yml
 
 CARFINDER_CMD_SRC			= cmd/carfinder/main.go
 CARFINDER_CMD_BIN			= build/carfinder
