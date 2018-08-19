@@ -16,7 +16,7 @@ CARFINDER_CMD_BIN			= build/carfinder
 DOCKER_COMPOSE_LOADTEST		= $(DOCKER_COMPOSE) -f build/docker-compose/loadtest/docker-compose.yml
 
 LOADTEST_RATE				= 20
-LOADTEST_DURATION			= 50s
+LOADTEST_DURATION			= 60s
 LOADTEST_RANDOM_PUT_QUERIES	= 1000
 LOADTEST_RANDOM_GET_QUERIES	= 1000
 
@@ -31,19 +31,13 @@ watch:
 	$(WATCH)
 
 production_up:
-	$(DOCKER_COMPOSE_PRODUCTION) build
-	$(DOCKER_COMPOSE_PRODUCTION) up -d
-	docker cp scripts/init_tables.sh $(shell $(DOCKER_COMPOSE_PRODUCTION) ps -q postgre):/init_tables.sh
-	$(DOCKER_COMPOSE_PRODUCTION) exec postgre bash /init_tables.sh
+	bash scripts/start_environment.sh "$(DOCKER_COMPOSE_PRODUCTION)"
 
 production_down:
 	$(DOCKER_COMPOSE_PRODUCTION) down
 
 development_up:
-	$(DOCKER_COMPOSE_DEVELOPMENT) build
-	$(DOCKER_COMPOSE_DEVELOPMENT) up -d
-	docker cp scripts/init_tables.sh $(shell $(DOCKER_COMPOSE_DEVELOPMENT) ps -q postgre):/init_tables.sh
-	$(DOCKER_COMPOSE_DEVELOPMENT) exec postgre bash /init_tables.sh
+	bash scripts/start_environment.sh "$(DOCKER_COMPOSE_DEVELOPMENT)"
 
 development_generate_drivers: development_up
 	$(DOCKER_COMPOSE_DEVELOPMENT) exec application ./build/carfinder driver generate -random=true -amount=50000
@@ -52,22 +46,20 @@ development_tests: development_up
 	$(DOCKER_COMPOSE_DEVELOPMENT) exec application $(GOTEST) -v ./pkg/*
 	$(DOCKER_COMPOSE_DEVELOPMENT) exec application $(GOTEST) -v ./integration
 
-development_unit_tests:
+development_unit_tests: development_up
 	$(DOCKER_COMPOSE_DEVELOPMENT) exec application $(GOTEST) -v ./pkg/*
 
-development_integration_tests:
+development_integration_tests: development_up
 	$(DOCKER_COMPOSE_DEVELOPMENT) exec application $(GOTEST) -v ./integration
 
 development_down:
 	$(DOCKER_COMPOSE_DEVELOPMENT) down
 
 loadtest:
-	$(DOCKER_COMPOSE_LOADTEST) up -d
-	docker cp scripts/init_tables.sh $(shell $(DOCKER_COMPOSE_LOADTEST) ps -q postgre):/init_tables.sh
-	$(DOCKER_COMPOSE_LOADTEST) exec postgre bash /init_tables.sh
+	bash scripts/start_environment.sh "$(DOCKER_COMPOSE_LOADTEST)"
 	$(DOCKER_COMPOSE_LOADTEST) exec application ./carfinder driver generate -random=true -amount=50000
 	$(DOCKER_COMPOSE_LOADTEST) exec vegeta bash loadtest.sh $(LOADTEST_RANDOM_PUT_QUERIES) $(LOADTEST_RANDOM_GET_QUERIES) "http://application:80" $(LOADTEST_RATE) $(LOADTEST_DURATION)
-	$(DOCKER_COMPOSE_LOADTEST) down -v
+	@$(DOCKER_COMPOSE_LOADTEST) down -v
 
 clean: $(CARFINDER_CMD_BIN)
 	rm $(CARFINDER_CMD_BIN)

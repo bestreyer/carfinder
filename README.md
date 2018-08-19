@@ -1,3 +1,6 @@
+### Installing
+You should copy .env.dist to .env
+
 ### Important
 https://github.com/bestreyer/carfinder is private repository. I don't forget about:
 
@@ -52,6 +55,18 @@ My opinion, that unit tests are useful if you write a library or mathematical so
 REST API applications should be covered with integration tests firstly. ( It's only my opinion :)
 
 Run tests:
+
+*Please, start integration tests after server is been started, otherwise tests doesn't work, because dependencies are installing*
+```
+#!/usr/bin/env sh
+
+echo "Installing dependencies"
+dep ensure --vendor-only
+
+exec realize start
+```
+
+Run tests
 ```
 make development_tests
 ```
@@ -73,10 +88,9 @@ I wanted to implement Kalman filter, but changed my mind.
 Because Kalman filter should be implemented on a device, because the device have access to inertial sensors, not just gps data.
 Thus, devices should send the already the optimal latitude, longitude.
 
-### Workflow
+### Important notes
 
-1. If driver sends a last request more then 10 minutes ago, this driver isn't returned from /api/v1/drivers,
-even if the driver fits the condition
+1. If the driver has sent their coordinates over 10 minutes ago, this driver won't returned in the response even if the driver meet the conditions
 
 2. If a accuracy less than 0.4% (approximately 90 meters error), the application don't update the driver location
 
