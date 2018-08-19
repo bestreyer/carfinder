@@ -59,7 +59,7 @@ loadtest:
 	bash scripts/start_environment.sh "$(DOCKER_COMPOSE_LOADTEST)"
 	$(DOCKER_COMPOSE_LOADTEST) exec application ./carfinder driver generate -random=true -amount=50000
 	$(DOCKER_COMPOSE_LOADTEST) exec vegeta bash loadtest.sh $(LOADTEST_RANDOM_PUT_QUERIES) $(LOADTEST_RANDOM_GET_QUERIES) "http://application:80" $(LOADTEST_RATE) $(LOADTEST_DURATION)
-	@$(DOCKER_COMPOSE_LOADTEST) down -v
+	@$(DOCKER_COMPOSE_LOADTEST) down -v > /dev/null 2>&1
 
 clean: $(CARFINDER_CMD_BIN)
 	rm $(CARFINDER_CMD_BIN)
