@@ -17,4 +17,5 @@ func setupDatabase() {
 
 	d.GetDbConn().QueryRow("DELETE FROM driver_location")
 	d.GetDbConn().QueryRow("ALTER SEQUENCE driver_location_driver_id_seq RESTART WITH 1")
+
 }
