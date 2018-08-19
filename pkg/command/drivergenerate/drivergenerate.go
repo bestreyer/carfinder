@@ -89,12 +89,12 @@ func (c *cmd) createDriversLocationsWorker(jobs <-chan *location.Location, resul
 
 // Random Republic of Singapore latitude
 func randLatitude() float64 {
-	return 1.478400 + rand.Float64()*(1.149600-1.478400)
+	return 1.239600 + rand.Float64()*(1.478400 - 1.239600)
 }
 
 // Random Republic of Singapore longitude
 func randLongitude() float64 {
-	return 104.094500 + rand.Float64()*(104.094500-103.594000)
+	return 103.587348 + rand.Float64()*(103.978413-103.594000)
 }
 
 func generateRandomLocation() (*location.Location) {

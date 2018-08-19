@@ -1,3 +1,7 @@
+### Load Testing
+
+`make loadtest`
+
 ### Development
 
 Set up environment:
