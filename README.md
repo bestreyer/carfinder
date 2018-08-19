@@ -97,7 +97,7 @@ Thus, devices should send the already the optimal latitude, longitude.
 
 1. If the driver has sent their coordinates over 10 minutes ago, this driver won't returned in the response even if the driver meet the conditions
 
-2. If a accuracy less than 0.4% (approximately 90 meters error), the application don't update the driver location
+2. If a accuracy less than 0.4% (approximately 90 meters error), the application doesn't update the driver location
 
 ### How to store latitude and longitude
 `driver_location` table has three columns, which to store location: `latitude`, `longitude`, `location`
