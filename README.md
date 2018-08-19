@@ -63,7 +63,7 @@ Run tests:
 echo "Installing dependencies"
 dep ensure --vendor-only
 
-exec realize start
+exec realize start <-- start tests after execute this line
 ```
 
 Run tests
