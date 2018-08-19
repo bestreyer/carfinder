@@ -17,7 +17,12 @@ example, using github or bitbucket or by posting this problem to a blog or forum
 
 ### Development
 Set up environment:
-`make development_up`
+
+```
+make development_up
+(Wait while dependencies are installing)
+make development_generate_drivers <-- generate drivers locations
+```
 
 Stop:
 `make development_down`
