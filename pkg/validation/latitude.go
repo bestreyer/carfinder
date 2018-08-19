@@ -5,9 +5,7 @@ import (
 	"github.com/go-playground/universal-translator"
 )
 
-func validateLatitude(fl validator.FieldLevel) bool {
-	val := fl.Field().Float()
-
+func validateLatitudeVal(val float64) bool {
 	if val > 90 || val < -90 {
 		return false
 	}
@@ -15,8 +13,12 @@ func validateLatitude(fl validator.FieldLevel) bool {
 	return true
 }
 
+func validateLatitudeField(fl validator.FieldLevel) bool {
+	return validateLatitudeVal(fl.Field().Float())
+}
+
 func registerLatitudeValidation(v *validator.Validate, t ut.Translator) {
-	v.RegisterValidation("latitude", validateLatitude)
+	v.RegisterValidation("latitude", validateLatitudeField)
 
 	v.RegisterTranslation("latitude", t, func(ut ut.Translator) error {
 		return ut.Add("latitude", "{0} should be between +/- 90", true)

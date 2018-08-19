@@ -5,14 +5,16 @@ import (
 	"github.com/go-playground/universal-translator"
 )
 
-func validateLongitude(fl validator.FieldLevel) bool {
-	val := fl.Field().Float()
-
+func validateLongitudeVal(val float64) bool {
 	if val > 180 || val < -180 {
 		return false
 	}
 
 	return true
+}
+
+func validateLongitude(fl validator.FieldLevel) bool {
+	return validateLongitudeVal(fl.Field().Float())
 }
 
 func registerLogitudeValidation(v *validator.Validate, t ut.Translator) {
