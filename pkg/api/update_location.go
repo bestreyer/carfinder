@@ -5,9 +5,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"github.com/bestreyer/carfinder/pkg/location"
-	"strconv"
-	"errors"
 	"time"
+	"strconv"
 )
 
 type updateLocationController struct {
@@ -15,17 +14,16 @@ type updateLocationController struct {
 }
 
 func (uc *updateLocationController) Handle(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	var l location.UpdateLocation
+	id, err := strconv.Atoi(ps.ByName("id"))
+	if nil != err || id > 50000 || id < 1 {
+		r.Context().(context.Context).JSONResponse(w, nil, 404)
+		return;
+	}
 
+	var l location.UpdateLocation
 	if err := r.Context().(context.Context).ShouldBindJSON(r, &l); err != nil {
 		r.Context().(context.Context).BadJSONResponse(w, err)
 		return
-	}
-
-	id, err := strconv.Atoi(ps.ByName("id"))
-	if nil != err {
-		r.Context().(context.Context).BadJSONResponse(w, errors.New("Id parameter should be integer number"))
-		return;
 	}
 
 	l.DriverId = id

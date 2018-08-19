@@ -49,9 +49,10 @@ func (c *ctx) BadJSONResponse(w http.ResponseWriter, err error) {
 	case *json.SyntaxError:
 		statusCode = 400
 		errors = append(errors, "Invalid JSON request")
-	case *validator.ValidationErrors:
+	case validator.ValidationErrors:
 		statusCode = 422
-		for _, e := range err.(validator.ValidationErrors) {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs {
 			errors = append(errors, e.Translate(c.translator))
 		}
 	default:
@@ -77,10 +78,12 @@ func (c *ctx) InternalErrorResponse(w http.ResponseWriter) {
 }
 
 func (c *ctx) JSONResponse(w http.ResponseWriter, i interface{}, statusCode int) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
 	if nil == i {
 		w.Write([]byte("{}"))
+		return
 	}
 
 	r, _ := json.Marshal(&i)

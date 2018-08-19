@@ -14,6 +14,7 @@ import (
 	"github.com/bestreyer/carfinder/pkg/location"
 	"github.com/bestreyer/carfinder/pkg/api"
 	"github.com/bestreyer/carfinder/pkg/route"
+	"github.com/bestreyer/carfinder/pkg/validation"
 )
 
 type DI interface {
@@ -44,15 +45,15 @@ func (d *di) GetRouteCollection() ([]route.Route) {
 	d.routeCollection = make([]route.Route, 2, 2)
 
 	d.routeCollection[0] = route.New(
-		"PUT",
-		"/api/v1/drivers/:id/location",
-		api.NewUpdateLocationController(d.GetLocationRepository()),
-	)
-
-	d.routeCollection[1] = route.New(
 		"GET",
 		"/api/v1/drivers",
 		api.NewGetDriverController(d.GetLocationRepository()),
+	)
+
+	d.routeCollection[1] = route.New(
+		"PUT",
+		"/api/v1/drivers/:id/location",
+		api.NewUpdateLocationController(d.GetLocationRepository()),
 	)
 
 	return d.routeCollection
@@ -73,7 +74,8 @@ func (d *di) GetValidator() (*validator.Validate) {
 		return d.validator
 	}
 
-	d.validator = validator.New()
+	d.validator = validation.New(d.GetTranslator())
+
 	return d.validator
 }
 
@@ -105,7 +107,7 @@ func (d *di) GetTranslator() (ut.Translator) {
 	uni := ut.New(en, en)
 	trans, found := uni.GetTranslator("en")
 
-	if true != found {
+	if false == found {
 		log.Fatal("Translator has not been found")
 	}
 

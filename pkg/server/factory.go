@@ -21,13 +21,15 @@ func (f *factory) Create() (Server, error) {
 	r := httprouter.New()
 
 	for _, rt := range f.routeCollection {
-		r.Handle(rt.Method(), rt.Path(), func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-			rt.Controller().Handle(w, r, ps)
-		})
+		f.createHandleByRoute(r, rt)
 	}
 
 	r.PanicHandler = func(w http.ResponseWriter, r *http.Request, i interface{}) {
 		log.Println(i)
+	}
+
+	r.NotFound = func(w http.ResponseWriter, r *http.Request) {
+		r.Context().(context.Context).JSONResponse(w, nil, 404)
 	}
 
 	s := &server{
@@ -37,6 +39,12 @@ func (f *factory) Create() (Server, error) {
 	}
 
 	return s, nil
+}
+
+func (f *factory) createHandleByRoute(router *httprouter.Router, rt route.Route) {
+	router.Handle(rt.Method(), rt.Path(), func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		rt.Controller().Handle(w, r, ps)
+	})
 }
 
 func (f *factory) replaceContextMiddleware(next http.Handler, cf context.Factory) http.Handler {
