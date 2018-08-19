@@ -95,7 +95,7 @@ func checkCountDriverLocationByLocation(d di.DI, t *testing.T, count int, lat fl
 	).Scan(&c)
 
 	if c != count {
-		t.Errorf("Expected amount of drivers with latitude(%f) and longitude(%f): %d, actual: %d",
+		t.Fatalf("Expected amount of drivers with latitude(%f) and longitude(%f): %d, actual: %d",
 			lat, lon, count, c)
 	}
 }
@@ -113,7 +113,7 @@ func sendUpdateLocationRequest(t *testing.T, json string, id int) (*http.Respons
 
 
 	if nil != err {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	return sendRequest(t, req)

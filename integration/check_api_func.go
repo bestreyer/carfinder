@@ -12,7 +12,7 @@ import (
 func addDriverLocation(d di.DI, t *testing.T, l *location.Location) {
 	err := d.GetLocationRepository().Create(context.Background(), l)
 	if err != nil {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 }
 
@@ -20,7 +20,7 @@ func sendRequest(t *testing.T, r *http.Request) (*http.Response) {
 	resp, err := http.DefaultClient.Do(r)
 
 	if nil != err {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	return resp
@@ -31,14 +31,14 @@ func checkStatusAndBody(t *testing.T, resp *http.Response, expCode int, expBody 
 	content := string(contentB)
 
 	if nil != err {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	if resp.StatusCode != expCode {
-		t.Errorf("Invalid response http code, actual: %d, expected: %d", resp.StatusCode, expCode)
+		t.Fatalf("Invalid response http code, actual: %d, expected: %d", resp.StatusCode, expCode)
 	}
 
 	if content != expBody {
-		t.Errorf("Invalid response http body, actual: %s, expected: %s", content, expBody)
+		t.Fatalf("Invalid response http body, actual: %s, expected: %s", content, expBody)
 	}
 }

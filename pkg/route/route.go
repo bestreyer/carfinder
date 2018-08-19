@@ -5,9 +5,9 @@ import (
 )
 
 type Route interface {
-	Method() (string)
-	Path() (string)
-	Controller() (api.Controller)
+	Method() string
+	Path() string
+	Controller() api.Controller
 }
 
 type route struct {
@@ -16,18 +16,18 @@ type route struct {
 	controller api.Controller
 }
 
-func (r *route) Method() (string) {
+func (r *route) Method() string {
 	return r.method
 }
 
-func (r *route) Path() (string) {
+func (r *route) Path() string {
 	return r.path
 }
 
-func (r *route) Controller() (api.Controller) {
+func (r *route) Controller() api.Controller {
 	return r.controller
 }
 
-func New(method string, path string, controller api.Controller) (Route) {
+func New(method string, path string, controller api.Controller) Route {
 	return &route{path: path, method: method, controller: controller}
 }

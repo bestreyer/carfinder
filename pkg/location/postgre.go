@@ -1,20 +1,20 @@
 package location
 
 import (
-	"database/sql"
 	"context"
+	"database/sql"
+	"time"
 )
 
 type postgreRepo struct {
-
 	db *sql.DB
 }
 
-func NewPostgreRepository(db *sql.DB) (Repository) {
+func NewPostgreRepository(db *sql.DB) Repository {
 	return &postgreRepo{db: db}
 }
 
-func (r *postgreRepo) Update(ctx context.Context, ul *UpdateLocation) (error) {
+func (r *postgreRepo) Update(ctx context.Context, ul *UpdateLocation) error {
 	r.db.QueryRowContext(ctx, `
 		UPDATE driver_location 
 		SET 
@@ -28,7 +28,7 @@ func (r *postgreRepo) Update(ctx context.Context, ul *UpdateLocation) (error) {
 	return nil
 }
 
-func (r *postgreRepo) Create(ctx context.Context, l *Location) (error) {
+func (r *postgreRepo) Create(ctx context.Context, l *Location) error {
 	err := r.db.QueryRowContext(ctx, `
 		INSERT INTO driver_location(latitude, longitude, location, updated_at) 
 		VALUES ($1, $2, ST_SetSRID(ST_MakePoint($2, $1),4326)::geography, $3)
@@ -44,9 +44,12 @@ func (r *postgreRepo) GetDrivers(ctx context.Context, dal *DriverAroundLocation)
 			driver_id as id, latitude, longitude, 
 			ST_Distance(location, ST_SetSRID(ST_MakePoint($2, $1), 4326)::geography) as distance 
 	  	FROM driver_location 
-	  	WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($2, $1), 4326)::geography, $3)
- 		LIMIT $4;
-	`, dal.Latitude, dal.Longitude, dal.Radius, dal.Limit)
+	  	WHERE 
+	  		ST_DWithin(location, ST_SetSRID(ST_MakePoint($2, $1), 4326)::geography, $3)
+		AND
+			updated_at > $4
+ 		LIMIT $5;
+	`, dal.Latitude, dal.Longitude, dal.Radius, time.Now().Add(-time.Duration(10)*time.Minute), dal.Limit)
 
 	if nil != err {
 		return nil, err

@@ -2,8 +2,8 @@ package context
 
 import (
 	"context"
-	"gopkg.in/go-playground/validator.v9"
 	"github.com/go-playground/universal-translator"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 type Factory interface {
@@ -23,6 +23,6 @@ func (f *factory) CreateContext(replaceableCtx context.Context) (Context, error)
 	}, nil
 }
 
-func NewFactory(v *validator.Validate, t ut.Translator) (Factory) {
+func NewFactory(v *validator.Validate, t ut.Translator) Factory {
 	return &factory{v, t}
 }

@@ -1,30 +1,30 @@
 package di
 
 import (
-	"github.com/go-playground/universal-translator"
-	"github.com/go-playground/locales/en"
-	"github.com/bestreyer/carfinder/pkg/context"
-	"gopkg.in/go-playground/validator.v9"
-	"github.com/bestreyer/carfinder/pkg/server"
 	"database/sql"
 	"fmt"
+	"github.com/bestreyer/carfinder/pkg/api"
+	"github.com/bestreyer/carfinder/pkg/context"
 	"github.com/bestreyer/carfinder/pkg/env"
+	"github.com/bestreyer/carfinder/pkg/location"
+	"github.com/bestreyer/carfinder/pkg/route"
+	"github.com/bestreyer/carfinder/pkg/server"
+	cvalidator "github.com/bestreyer/carfinder/pkg/validator"
+	"github.com/go-playground/locales/en"
+	"github.com/go-playground/universal-translator"
 	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
-	"github.com/bestreyer/carfinder/pkg/location"
-	"github.com/bestreyer/carfinder/pkg/api"
-	"github.com/bestreyer/carfinder/pkg/route"
-	cvalidator "github.com/bestreyer/carfinder/pkg/validator"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 type DI interface {
-	GetTranslator() (ut.Translator)
-	GetDbConn() (*sql.DB)
-	GetValidator() (*validator.Validate)
-	GetContextFactory() (context.Factory)
-	GetServerFactory() (server.Factory)
-	GetLocationRepository() (location.Repository)
-	GetRouteCollection() ([]route.Route)
+	GetTranslator() ut.Translator
+	GetDbConn() *sql.DB
+	GetValidator() *validator.Validate
+	GetContextFactory() context.Factory
+	GetServerFactory() server.Factory
+	GetLocationRepository() location.Repository
+	GetRouteCollection() []route.Route
 }
 
 type di struct {
@@ -37,7 +37,7 @@ type di struct {
 	routeCollection    []route.Route
 }
 
-func (d *di) GetRouteCollection() ([]route.Route) {
+func (d *di) GetRouteCollection() []route.Route {
 	if nil != d.routeCollection {
 		return d.routeCollection
 	}
@@ -59,7 +59,7 @@ func (d *di) GetRouteCollection() ([]route.Route) {
 	return d.routeCollection
 }
 
-func (d *di) GetLocationRepository() (location.Repository) {
+func (d *di) GetLocationRepository() location.Repository {
 	if nil != d.locationRepository {
 		return d.locationRepository
 	}
@@ -69,7 +69,7 @@ func (d *di) GetLocationRepository() (location.Repository) {
 	return d.locationRepository
 }
 
-func (d *di) GetValidator() (*validator.Validate) {
+func (d *di) GetValidator() *validator.Validate {
 	if nil != d.validator {
 		return d.validator
 	}
@@ -79,16 +79,16 @@ func (d *di) GetValidator() (*validator.Validate) {
 	return d.validator
 }
 
-func (d *di) GetContextFactory() (context.Factory) {
+func (d *di) GetContextFactory() context.Factory {
 	if nil != d.contextFactory {
 		return d.contextFactory
 	}
 
-	d.contextFactory = context.NewFactory(d.GetValidator(), d.GetTranslator());
+	d.contextFactory = context.NewFactory(d.GetValidator(), d.GetTranslator())
 	return d.contextFactory
 }
 
-func (d *di) GetServerFactory() (server.Factory) {
+func (d *di) GetServerFactory() server.Factory {
 	if nil != d.serverFactory {
 		return d.serverFactory
 	}
@@ -98,7 +98,7 @@ func (d *di) GetServerFactory() (server.Factory) {
 	return d.serverFactory
 }
 
-func (d *di) GetTranslator() (ut.Translator) {
+func (d *di) GetTranslator() ut.Translator {
 	if nil != d.translator {
 		return d.translator
 	}
@@ -115,7 +115,7 @@ func (d *di) GetTranslator() (ut.Translator) {
 	return d.translator
 }
 
-func (d *di) GetDbConn() (*sql.DB) {
+func (d *di) GetDbConn() *sql.DB {
 	if nil != d.dbConn {
 		return d.dbConn
 	}
@@ -139,6 +139,6 @@ func (d *di) GetDbConn() (*sql.DB) {
 	return d.dbConn
 }
 
-func New() (DI) {
+func New() DI {
 	return &di{}
 }

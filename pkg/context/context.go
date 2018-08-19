@@ -69,7 +69,7 @@ func (c *ctx) BadJSONResponse(w http.ResponseWriter, err error) {
 
 func (c *ctx) InternalErrorResponse(w http.ResponseWriter) {
 	errors := make([]string, 1, 1)
-	errors[0] = "Internal Error. Look at the server logs";
+	errors[0] = "Internal Error. Look at the server logs"
 	m := map[string][]string{
 		"errors": errors,
 	}

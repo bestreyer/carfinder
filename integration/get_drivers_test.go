@@ -8,6 +8,7 @@ import (
 	"github.com/bestreyer/carfinder/pkg/di"
 	"github.com/bestreyer/carfinder/pkg/location"
 	"encoding/json"
+	"time"
 )
 
 func TestGetDriversValidation(t *testing.T) {
@@ -47,8 +48,8 @@ func TestGetDriversValidation(t *testing.T) {
 func TestGetDriverInRadius(t *testing.T) {
 	d := di.New()
 
-	drPer := &location.Location{Latitude: 59.959232, Longitude: 30.320070}
-	drPoch := &location.Location{Latitude: 59.960437, Longitude: 30.317402}
+	drPer := &location.Location{Latitude: 59.959232, Longitude: 30.320070, UpdatedAt: time.Now()}
+	drPoch := &location.Location{Latitude: 59.960437, Longitude: 30.317402, UpdatedAt: time.Now()	}
 
 	addDriverLocation(d, t, drPer)
 	addDriverLocation(d, t, drPoch)
@@ -57,11 +58,11 @@ func TestGetDriverInRadius(t *testing.T) {
 	checkAmountOfDrivers(t, &drivers, 1)
 
 	if drivers[0].Id != drPer.DriverId {
-		t.Errorf("Expected driver: %d, actual: %d", drPer.DriverId, drivers[0].Id)
+		t.Fatalf("Expected driver: %d, actual: %d", drPer.DriverId, drivers[0].Id)
 	}
 
 	if 0 == drivers[0].Distance {
-		t.Errorf("Invalid distance value")
+		t.Fatalf("Invalid distance value")
 	}
 
 
@@ -81,7 +82,7 @@ func sendGetDriverLocationRequest(t *testing.T, q string) (*http.Response) {
 
 
 	if nil != err {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	return sendRequest(t, req)
@@ -89,7 +90,7 @@ func sendGetDriverLocationRequest(t *testing.T, q string) (*http.Response) {
 
 func checkAmountOfDrivers(t *testing.T, drivers *[]location.LocationWithDistance, count int) {
 	if len(*drivers) != count {
-		t.Errorf("Expected amount of near drivers: %d, actual: %d", 1, len(*drivers))
+		t.Fatalf("Expected amount of near drivers: %d, actual: %d", 1, len(*drivers))
 	}
 }
 

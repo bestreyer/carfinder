@@ -2,10 +2,10 @@ package server
 
 import (
 	"github.com/bestreyer/carfinder/pkg/context"
-	"github.com/julienschmidt/httprouter"
-	"net/http"
-	"log"
 	"github.com/bestreyer/carfinder/pkg/route"
+	"github.com/julienschmidt/httprouter"
+	"log"
+	"net/http"
 )
 
 type Factory interface {
@@ -58,6 +58,6 @@ func (f *factory) replaceContextMiddleware(next http.Handler, cf context.Factory
 	})
 }
 
-func NewFactory(cf context.Factory, routeCollection []route.Route) (Factory) {
+func NewFactory(cf context.Factory, routeCollection []route.Route) Factory {
 	return &factory{cf: cf, routeCollection: routeCollection}
 }

@@ -2,11 +2,11 @@ package api
 
 import (
 	"github.com/bestreyer/carfinder/pkg/context"
+	"github.com/bestreyer/carfinder/pkg/location"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"github.com/bestreyer/carfinder/pkg/location"
-	"time"
 	"strconv"
+	"time"
 )
 
 type updateLocationController struct {
@@ -17,12 +17,17 @@ func (uc *updateLocationController) Handle(w http.ResponseWriter, r *http.Reques
 	id, err := strconv.Atoi(ps.ByName("id"))
 	if nil != err || id > 50000 || id < 1 {
 		r.Context().(context.Context).JSONResponse(w, nil, 404)
-		return;
+		return
 	}
 
 	var l location.UpdateLocation
 	if err := r.Context().(context.Context).ShouldBindJSON(r, &l); err != nil {
 		r.Context().(context.Context).BadJSONResponse(w, err)
+		return
+	}
+
+	if l.Accuracy < 0.4 {
+		r.Context().(context.Context).JSONResponse(w, nil, 200)
 		return
 	}
 
@@ -34,6 +39,6 @@ func (uc *updateLocationController) Handle(w http.ResponseWriter, r *http.Reques
 	r.Context().(context.Context).JSONResponse(w, nil, 200)
 }
 
-func NewUpdateLocationController(lr location.Repository) (Controller) {
+func NewUpdateLocationController(lr location.Repository) Controller {
 	return &updateLocationController{lr: lr}
 }

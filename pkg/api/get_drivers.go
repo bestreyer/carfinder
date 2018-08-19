@@ -1,11 +1,11 @@
 package api
 
 import (
-	"github.com/bestreyer/carfinder/pkg/location"
-	"net/http"
-	"github.com/julienschmidt/httprouter"
 	"github.com/bestreyer/carfinder/pkg/context"
+	"github.com/bestreyer/carfinder/pkg/location"
+	"github.com/julienschmidt/httprouter"
 	"github.com/labstack/gommon/log"
+	"net/http"
 )
 
 type getDriversController struct {
@@ -38,6 +38,6 @@ func (uc *getDriversController) Handle(w http.ResponseWriter, r *http.Request, p
 	r.Context().(context.Context).JSONResponse(w, rows, 200)
 }
 
-func NewGetDriverController(lr location.Repository) (Controller) {
+func NewGetDriverController(lr location.Repository) Controller {
 	return &getDriversController{lr: lr}
 }
