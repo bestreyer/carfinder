@@ -1,4 +1,4 @@
-package driver_generate
+package drivergenerate
 
 import (
 	"github.com/mitchellh/cli"

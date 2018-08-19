@@ -1,4 +1,4 @@
-package validation
+package validator
 
 import (
 	"gopkg.in/go-playground/validator.v9"
@@ -11,6 +11,7 @@ func New(t ut.Translator) (*validator.Validate) {
 	registerLatitudeValidation(v, t)
 	registerLogitudeValidation(v, t)
 	registerRequiredValidation(v, t)
+	registerAccuracyValidation(v, t)
 
 	return v
 }

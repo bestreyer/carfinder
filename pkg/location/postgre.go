@@ -30,7 +30,7 @@ func (r *postgreRepo) Update(ctx context.Context, ul *UpdateLocation) (error) {
 
 func (r *postgreRepo) Create(ctx context.Context, l *Location) (error) {
 	err := r.db.QueryRowContext(ctx, `
-		INSERT INTO driver_location(latitude, longitude, l, updated_at) 
+		INSERT INTO driver_location(latitude, longitude, location, updated_at) 
 		VALUES ($1, $2, ST_SetSRID(ST_MakePoint($2, $1),4326)::geography, $3)
 		RETURNING driver_id
 	`, l.Latitude, l.Longitude, l.UpdatedAt).Scan(&l.DriverId)

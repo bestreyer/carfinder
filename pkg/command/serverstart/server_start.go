@@ -1,4 +1,4 @@
-package server_start
+package serverstart
 
 import (
 	"flag"

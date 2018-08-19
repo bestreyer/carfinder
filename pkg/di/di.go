@@ -14,7 +14,7 @@ import (
 	"github.com/bestreyer/carfinder/pkg/location"
 	"github.com/bestreyer/carfinder/pkg/api"
 	"github.com/bestreyer/carfinder/pkg/route"
-	"github.com/bestreyer/carfinder/pkg/validation"
+	cvalidator "github.com/bestreyer/carfinder/pkg/validator"
 )
 
 type DI interface {
@@ -74,7 +74,7 @@ func (d *di) GetValidator() (*validator.Validate) {
 		return d.validator
 	}
 
-	d.validator = validation.New(d.GetTranslator())
+	d.validator = cvalidator.New(d.GetTranslator())
 
 	return d.validator
 }

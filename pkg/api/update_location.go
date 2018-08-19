@@ -31,7 +31,7 @@ func (uc *updateLocationController) Handle(w http.ResponseWriter, r *http.Reques
 
 	uc.lr.Update(r.Context(), &l)
 
-	r.Context().(context.Context).JSONResponse(w, nil, 204)
+	r.Context().(context.Context).JSONResponse(w, nil, 200)
 }
 
 func NewUpdateLocationController(lr location.Repository) (Controller) {

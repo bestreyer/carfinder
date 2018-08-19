@@ -11,7 +11,7 @@ type Location struct {
 
 type UpdateLocation struct {
 	Location
-	Accuracy float64 `json:"accuracy" validate:"required"`
+	Accuracy float64 `json:"accuracy" validate:"required,accuracy"`
 }
 
 type LocationWithDistance struct {

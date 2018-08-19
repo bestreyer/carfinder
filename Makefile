@@ -23,9 +23,14 @@ watch:
 	$(WATCH)
 
 development_up:
+	$(DOCKER_COMPOSE_DEVELOPMENT) build
 	$(DOCKER_COMPOSE_DEVELOPMENT) up -d
 	docker cp scripts/init_tables.sh $(shell $(DOCKER_COMPOSE_DEVELOPMENT) ps -q postgre):/init_tables.sh
 	$(DOCKER_COMPOSE_DEVELOPMENT) exec postgre bash /init_tables.sh
+
+development_tests: development_up
+	$(DOCKER_COMPOSE_DEVELOPMENT) exec application $(GOTEST) -v ./pkg/*
+	$(DOCKER_COMPOSE_DEVELOPMENT) exec application $(GOTEST) -v ./integration
 
 development_down:
 	$(DOCKER_COMPOSE_DEVELOPMENT) down
@@ -36,4 +41,4 @@ loadtest:
 clean: $(CARFINDER_CMD_BIN)
 	rm $(CARFINDER_CMD_BIN)
 
-.PHONY: build watch clean development_up build_production development_down
+.PHONY: build watch clean development_up build_production development_down development_tests
