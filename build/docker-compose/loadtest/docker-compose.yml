@@ -1,0 +1,28 @@
+version: "3"
+services:
+  application:
+    build:
+      dockerfile: build/docker/production/Dockerfile
+      context: ../../../
+    restart: always
+    depends_on:
+      - postgre
+    env_file:
+    - ../../../.env
+
+  vegeta:
+    build:
+      context: ../../docker/vegeta/
+    restart: always
+
+  postgre:
+    image: kartoza/postgis:10.0-2.4
+    restart: always
+    env_file:
+    - ../../../.env
+    environment:
+    - ALLOW_IP_RANGE=0.0.0.0/0
+    volumes:
+    - db-data:/var/lib/postgresql
+volumes:
+  db-data:
