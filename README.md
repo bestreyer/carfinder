@@ -56,7 +56,7 @@ REST API applications should be covered with integration tests firstly. ( It's o
 
 Run tests:
 
-*Please, start integration tests after server is been started, otherwise tests doesn't work, because dependencies are installing*
+**Please, start integration tests after server is been started, otherwise tests doesn't work, because dependencies are installing**
 ```
 #!/usr/bin/env sh
 
