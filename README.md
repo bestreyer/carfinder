@@ -1,12 +1,6 @@
 ### Installing
 You should copy .env.dist to .env
 
-### Important
-https://github.com/bestreyer/carfinder is private repository. I don't forget about:
-
-"Do not make either your solution or this problem statement publicly available by, for
-example, using github or bitbucket or by posting this problem to a blog or forum"
-
 ### Tech stack
 
 1. Golang
